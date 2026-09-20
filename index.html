@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Il mio menu</title>
+<meta name="theme-color" content="#E9F1EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1411" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Menu">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="description" content="Menu settimanale con quantità e consigli">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+:root{
+  --bg:#E9F1EC;
+  --o1:#FFC9A3; --o2:#9BD9FF; --o3:#A8E6C3; --o4:#D3BFFF;
+  --ink:#12281F; --ink2:#48604F;
+  --accent:#1F7A5A; --accent-ink:#ffffff;
+  --glass-a:rgba(255,255,255,.62); --glass-b:rgba(255,255,255,.34);
+  --edge:rgba(255,255,255,.75); --hi:rgba(255,255,255,.9); --lo:rgba(20,60,40,.08);
+  --shadow:rgba(30,70,50,.14); --divider:rgba(18,40,31,.10);
+  --sel:rgba(255,255,255,.95); --sheen:.55;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1411;
+    --o1:#7A3E1E; --o2:#1D4E7A; --o3:#1B6B4C; --o4:#4B3A8C;
+    --ink:#EAF4EE; --ink2:#A6BDB0;
+    --accent:#5FD3A4; --accent-ink:#06221A;
+    --glass-a:rgba(255,255,255,.13); --glass-b:rgba(255,255,255,.05);
+    --edge:rgba(255,255,255,.22); --hi:rgba(255,255,255,.35); --lo:rgba(0,0,0,.35);
+    --shadow:rgba(0,0,0,.45); --divider:rgba(255,255,255,.12);
+    --sel:rgba(255,255,255,.22); --sheen:.16;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1411;
+  --o1:#7A3E1E; --o2:#1D4E7A; --o3:#1B6B4C; --o4:#4B3A8C;
+  --ink:#EAF4EE; --ink2:#A6BDB0;
+  --accent:#5FD3A4; --accent-ink:#06221A;
+  --glass-a:rgba(255,255,255,.13); --glass-b:rgba(255,255,255,.05);
+  --edge:rgba(255,255,255,.22); --hi:rgba(255,255,255,.35); --lo:rgba(0,0,0,.35);
+  --shadow:rgba(0,0,0,.45); --divider:rgba(255,255,255,.12);
+  --sel:rgba(255,255,255,.22); --sheen:.16;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+body{
+  margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
+  font-family:"SF Pro Rounded",ui-rounded,"Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:16px; line-height:1.4; -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* ---------- Sfondo ---------- */
+.blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.9;z-index:-1;pointer-events:none;will-change:transform}
+.b1{width:70vmax;height:70vmax;left:-25vmax;top:-25vmax;background:var(--o1);animation:drift1 46s ease-in-out infinite alternate}
+.b2{width:60vmax;height:60vmax;right:-22vmax;top:8vh;background:var(--o2);animation:drift2 52s ease-in-out infinite alternate}
+.b3{width:65vmax;height:65vmax;left:-20vmax;bottom:-28vmax;background:var(--o3);animation:drift2 58s ease-in-out infinite alternate-reverse}
+.b4{width:50vmax;height:50vmax;right:-15vmax;bottom:-20vmax;background:var(--o4);animation:drift1 48s ease-in-out infinite alternate-reverse}
+@keyframes drift1{to{transform:translate(8vmax,6vmax) scale(1.08)}}
+@keyframes drift2{to{transform:translate(-7vmax,-5vmax) scale(1.06)}}
+
+/* ---------- Vetro ---------- */
+.glass{
+  position:relative; isolation:isolate; border-radius:28px;
+  background:linear-gradient(140deg,var(--glass-a),var(--glass-b));
+  -webkit-backdrop-filter:blur(26px) saturate(180%);
+  backdrop-filter:blur(26px) saturate(180%);
+  border:1px solid var(--edge);
+  box-shadow:inset 0 1px 0 var(--hi), inset 0 -1px 0 var(--lo), 0 12px 32px var(--shadow);
+}
+.glass::before{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:-1;
+  background:linear-gradient(160deg,rgba(255,255,255,.7) 0%,rgba(255,255,255,0) 34%);
+  opacity:var(--sheen);
+}
+
+/* ---------- Struttura ---------- */
+.wrap{max-width:680px;margin:0 auto;padding:calc(22px + env(safe-area-inset-top)) 16px calc(120px + env(safe-area-inset-bottom))}
+header.top{padding:4px 6px 16px}
+h1{margin:0;font-size:clamp(30px,8vw,40px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.sub{margin:6px 0 0;color:var(--ink2);font-size:15px}
+
+/* ---------- Selettore giorni ---------- */
+.days{
+  position:sticky; top:calc(10px + env(safe-area-inset-top)); z-index:30;
+  display:grid; grid-template-columns:repeat(7,1fr); gap:3px; padding:6px; border-radius:26px;
+}
+.day-btn{
+  border:0; background:transparent; color:var(--ink2); cursor:pointer; position:relative;
+  padding:11px 0 12px; border-radius:20px; font-weight:700; font-size:14px;
+  transition:background .25s, color .25s, box-shadow .25s;
+}
+.day-btn[aria-selected="true"]{
+  background:var(--sel); color:var(--ink);
+  box-shadow:inset 0 1px 0 var(--hi), 0 4px 14px var(--shadow);
+}
+.day-btn.today::after{
+  content:""; position:absolute; left:50%; bottom:5px; width:5px; height:5px; margin-left:-2.5px;
+  border-radius:50%; background:var(--accent);
+}
+
+/* ---------- Intestazione del giorno ---------- */
+.dayhead{padding:22px 6px 4px}
+.dayhead .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+h2{margin:0;font-size:30px;font-weight:800;letter-spacing:-.02em}
+.today-pill{
+  font-size:13px;font-weight:800;padding:4px 11px;border-radius:999px;
+  background:var(--accent);color:var(--accent-ink);
+}
+.progress{margin-top:12px}
+.ptxt{font-size:14px;color:var(--ink2);display:flex;justify-content:space-between;gap:8px}
+.bar{margin-top:7px;height:8px;border-radius:99px;background:var(--divider);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 60%,#7FE3FF));transition:width .4s ease}
+.hint{margin:10px 0 0;font-size:13.5px;color:var(--ink2)}
+.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.pill{
+  border:0;cursor:pointer;padding:9px 16px;border-radius:999px;font-weight:700;font-size:14px;
+  background:linear-gradient(140deg,var(--glass-a),var(--glass-b));
+  box-shadow:inset 0 1px 0 var(--hi), inset 0 0 0 1px var(--edge), 0 4px 12px var(--shadow);
+}
+
+/* ---------- Pasti ---------- */
+.meals{margin-top:6px}
+.meal{margin-top:12px}
+.meal-h{display:flex;align-items:center;gap:4px;padding:6px 10px 6px 6px}
+.meal-toggle{
+  flex:1;min-width:0;display:flex;align-items:center;gap:12px;background:none;border:0;
+  text-align:left;padding:8px;border-radius:22px;cursor:pointer;
+}
+.chip{
+  flex:none;width:46px;height:46px;border-radius:16px;display:grid;place-items:center;font-size:23px;
+  background:color-mix(in srgb,var(--c) 26%,transparent);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55), inset 0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent);
+}
+.mtxt{flex:1;min-width:0;display:flex;flex-direction:column}
+.mname{font-weight:800;font-size:18px;letter-spacing:-.01em}
+.msub{font-size:13.5px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meal.open .pv{display:none}
+.meal:not(.open) .cn{display:none}
+.chev{flex:none;color:var(--ink2);transition:transform .3s ease}
+.meal.open .chev,.acc.open .chev{transform:rotate(180deg)}
+.done-btn{
+  flex:none;width:40px;height:40px;border-radius:50%;cursor:pointer;display:grid;place-items:center;
+  background:transparent;border:2px solid color-mix(in srgb,var(--ink2) 55%,transparent);color:transparent;
+  transition:background .25s,border-color .25s,color .25s,transform .2s;
+}
+.done-btn:active{transform:scale(.92)}
+.meal.done .done-btn{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.meal.done .mname{opacity:.65}
+
+.meal-body,.tip,.acc-b{
+  display:grid;grid-template-rows:0fr;visibility:hidden;
+  transition:grid-template-rows .32s ease,visibility 0s .32s;
+}
+.meal.open>.meal-body,.tip.open,.acc.open>.acc-b{grid-template-rows:1fr;visibility:visible;transition-delay:0s}
+.meal-in,.tip-in,.acc-in{overflow:hidden;min-height:0}
+.foods{list-style:none;margin:0;padding:0 18px 8px}
+.food{padding:13px 0;border-top:1px solid var(--divider)}
+.food-main{display:flex;align-items:center;gap:10px}
+.fname{flex:1;min-width:0;font-weight:700;font-size:16.5px}
+.qty{
+  flex:none;white-space:nowrap;font-weight:800;font-size:14.5px;padding:6px 13px;border-radius:999px;
+  font-variant-numeric:tabular-nums;
+  background:color-mix(in srgb,var(--c) 20%,transparent);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 34%,transparent);
+}
+.qty.qb{font-weight:600;background:transparent;color:var(--ink2)}
+.info{
+  flex:none;width:30px;height:30px;border-radius:50%;cursor:pointer;border:0;
+  font-family:Georgia,serif;font-style:italic;font-weight:700;font-size:16px;color:var(--ink2);
+  background:linear-gradient(140deg,var(--glass-a),var(--glass-b));
+  box-shadow:inset 0 1px 0 var(--hi), inset 0 0 0 1px var(--edge);
+  transition:background .25s,color .25s;
+}
+.info[aria-expanded="true"]{background:var(--accent);color:var(--accent-ink)}
+.parts{list-style:none;margin:10px 0 0;padding:0}
+.parts li{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:6px 0 6px 12px;margin-left:4px;color:var(--ink2);font-size:15px;
+  border-left:3px solid color-mix(in srgb,var(--c) 55%,transparent);
+}
+.parts li+li{margin-top:4px}
+.tipbox{
+  margin-top:12px;padding:13px 15px;border-radius:18px;font-size:14.5px;line-height:1.55;color:var(--ink);
+  background:color-mix(in srgb,var(--c,var(--accent)) 11%,transparent);
+  border:1px solid color-mix(in srgb,var(--c,var(--accent)) 24%,transparent);
+}
+.link{
+  display:block;margin-top:10px;padding:0;border:0;background:none;cursor:pointer;
+  color:var(--accent);font-weight:800;font-size:14.5px;text-decoration:underline;text-underline-offset:3px;
+}
+.footer-actions{margin-top:18px;text-align:center}
+.textbtn{border:0;background:none;color:var(--ink2);font-size:14px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:8px}
+
+/* ---------- Giorno libero ---------- */
+.free{margin-top:14px;padding:22px 20px 20px}
+.free .chip{margin-bottom:12px;--c:#34C77B}
+.free h3{margin:0 0 8px;font-size:22px;font-weight:800;letter-spacing:-.01em}
+.free p{margin:0 0 10px;color:var(--ink2);font-size:16px;line-height:1.55}
+.free .lbl{margin-top:16px;font-weight:700;color:var(--ink);font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+
+/* ---------- Consigli ---------- */
+.section-title{margin:26px 6px 4px;font-size:22px;font-weight:800;letter-spacing:-.01em}
+.section-note{margin:0 6px 6px;color:var(--ink2);font-size:14.5px}
+.acc{margin-top:10px;border-radius:24px}
+.acc-h{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;
+  background:none;border:0;padding:16px 18px;cursor:pointer;border-radius:24px;
+}
+.at{display:flex;flex-direction:column;min-width:0}
+.at b{font-weight:800;font-size:16.5px}
+.at small{color:var(--ink2);font-size:13.5px;margin-top:2px}
+.acc-pad{padding:0 18px 18px}
+.acc-pad p{margin:0 0 8px;font-size:15px;line-height:1.55}
+.acc-pad ul.rules{margin:0;padding-left:20px;font-size:15px;line-height:1.55}
+.acc-pad ul.rules li+li{margin-top:6px}
+ul.alts{list-style:none;margin:0;padding:0}
+ul.alts li{padding:11px 0;border-top:1px solid var(--divider)}
+ul.alts li:first-child{border-top:0;padding-top:2px}
+.an{display:block;font-weight:800;font-size:15.5px}
+.ai{display:block;color:var(--ink2);font-size:14.5px;margin-top:2px;line-height:1.5}
+.tag{
+  display:inline-block;margin-left:8px;padding:2px 9px;border-radius:99px;vertical-align:1px;
+  font-size:12px;font-weight:800;background:var(--accent);color:var(--accent-ink);
+}
+.search{
+  width:100%;margin-top:12px;padding:15px 20px;border-radius:999px;border:1px solid var(--edge);
+  font:inherit;font-size:16px;color:var(--ink);
+  background:linear-gradient(140deg,var(--glass-a),var(--glass-b));
+  -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);
+  box-shadow:inset 0 1px 0 var(--hi), 0 6px 18px var(--shadow);
+}
+.search::placeholder{color:var(--ink2)}
+.nores{margin:16px 6px;color:var(--ink2)}
+
+/* ---------- Barra in basso ---------- */
+.nav{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));
+  z-index:40;display:flex;gap:4px;padding:6px;border-radius:999px;
+}
+.nav button{
+  display:flex;align-items:center;gap:8px;padding:11px 22px;border-radius:999px;border:0;
+  background:transparent;color:var(--ink2);font-weight:800;font-size:15px;cursor:pointer;
+  transition:background .25s,color .25s,box-shadow .25s;
+}
+.nav button[aria-selected="true"]{background:var(--sel);color:var(--ink);box-shadow:inset 0 1px 0 var(--hi), 0 4px 14px var(--shadow)}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+@media (max-width:380px){
+  .day-btn{font-size:13px}
+  .qty{font-size:13.5px;padding:5px 10px}
+  .nav button{padding:11px 18px}
+}
+</style>
+</head>
+<body>
+<div class="blob b1" aria-hidden="true"></div>
+<div class="blob b2" aria-hidden="true"></div>
+<div class="blob b3" aria-hidden="true"></div>
+<div class="blob b4" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Il mio menu</h1>
+    <p class="sub">Piano alimentare dell'11 settembre 2026</p>
+  </header>
+
+  <main>
+    <section id="menu" aria-label="Menu della settimana">
+      <div class="days glass" role="tablist" aria-label="Giorni della settimana" id="days"></div>
+      <div id="day"></div>
+    </section>
+
+    <section id="consigli" aria-label="Consigli" hidden>
+      <h2 class="section-title" style="margin-top:8px">Regole di base</h2>
+      <div id="rules"></div>
+
+      <h2 class="section-title">Alternative ai piatti</h2>
+      <p class="section-note">Il primo piatto di ogni elenco è quello del tuo menu e va scelto più spesso. Gli altri servono per variare.</p>
+      <div id="alts"></div>
+
+      <h2 class="section-title">Guida agli alimenti</h2>
+      <p class="section-note">Pesi, misure e modi di cottura di ogni alimento.</p>
+      <input class="search" id="q" type="search" placeholder="Cerca un alimento" aria-label="Cerca un alimento" autocomplete="off">
+      <div id="guida"></div>
+      <p class="nores" id="nores" hidden>Nessun alimento trovato.</p>
+    </section>
+  </main>
+</div>
+
+<nav class="nav glass" role="tablist" aria-label="Sezioni">
+  <button role="tab" id="tab-menu" data-a="tab" data-tab="menu" aria-selected="true">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>
+    Menu
+  </button>
+  <button role="tab" id="tab-consigli" data-a="tab" data-tab="consigli" aria-selected="false">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>
+    Consigli
+  </button>
+</nav>
+
+<script>
+(function(){
+  var QB = 'quanto basta';
+  var F = function(n,q,tip){ return {n:n,q:q,tip:tip}; };
+  var P = function(n,q){ return {n:n,q:q}; };
+  var D = function(n,parts,tip,alt){ return {n:n,parts:parts,tip:tip,alt:alt}; };
+
+  var MEALS = [
+    {id:'colazione', name:'Colazione', icon:'🥣', c:'#F0A020'},
+    {id:'meta', name:'Metà mattina', icon:'🍎', c:'#34C77B'},
+    {id:'pranzo', name:'Pranzo', icon:'🍝', c:'#FF6B5B'},
+    {id:'merenda', name:'Merenda', icon:'🥪', c:'#9B7BFF'},
+    {id:'cena', name:'Cena', icon:'🍽️', c:'#3B82F6'},
+    {id:'arco', name:"Nell'arco della giornata", icon:'🫒', c:'#14B8A6'}
+  ];
+
+  var DAYS = [
+    {id:'lun', short:'Lun', name:'Lunedì', meals:{
+      colazione:[F('Latte intero di vacca delattosato','1 bicchiere','latte'),F('Fiocchi di mais aglutinati','1 bicchiere e ½','fiocchi'),F('Fette biscottate aglutinate','n° 2','fette'),F('Marmellata','2 cucchiaini','marmellata')],
+      meta:[F('Gallette di mais aglutinate','n° 2','gallette'),F('Mirtilli','1 bicchiere','mirtilli'),F('Mandorle','g 18','mandorle')],
+      pranzo:[D('Pasta aglutinata con ragù di vitello',[P('Pasta aglutinata','g 150'),P('Salsa di pomodoro',QB),P('Vitello magro','g 50')],'ragu','1239'),F('Spinaci','1 porzione','spinaci')],
+      merenda:[F('Pane aglutinato','g 100','pane'),F('Fesa di tacchino arrosto','g 100','fesa')],
+      cena:[F('Misto legumi secchi','6 cucchiai','legumi'),F('Pomodori','1 porzione','pomodori')],
+      arco:[F('Pane aglutinato','g 100','pane'),F('Olio extra vergine di oliva','7 cucchiaini e ½','olio')]
+    }},
+    {id:'mar', short:'Mar', name:'Martedì', meals:{
+      colazione:[F('Latte intero di vacca','1 bicchiere','latte'),F('Fiocchi di mais','1 bicchiere e ½','fiocchi'),F('Fette biscottate aglutinate','n° 2','fette'),F('Crema di nocciole e cacao','3 cucchiaini','nocciole')],
+      meta:[F('Banane','n° 1','banane'),F('Noci secche','g 15','noci')],
+      pranzo:[D('Riso, funghi e parmigiano',[P('Riso','6 cucchiai'),P('Funghi',QB),P('Parmigiano grattugiato','3 cucchiaini')],'risofunghi','445'),F('Fagiolini','1 porzione','fagiolini')],
+      merenda:[F('Uva','1 bicchiere','uva'),F('Gallette di mais aglutinate','n° 3','gallette')],
+      cena:[F('Sogliola','g 300','sogliola'),F('Patate','g 300','patate')],
+      arco:[F('Pane aglutinato','g 150','pane'),F('Olio extra vergine di oliva','6 cucchiaini e ½','olio')]
+    }},
+    {id:'mer', short:'Mer', name:'Mercoledì', meals:{
+      colazione:[F('Latte intero di vacca delattosato','1 bicchiere','latte'),F('Fiocchi di mais aglutinati','1 bicchiere e ½','fiocchi'),F('Fette biscottate aglutinate','n° 2','fette'),F('Marmellata','2 cucchiaini','marmellata')],
+      meta:[F('Gallette di mais aglutinate','n° 3','gallette'),F('Pesche','n° 1','pesche'),F('Mandorle','g 15','mandorle')],
+      pranzo:[D('Pasta aglutinata con il tonno al naturale',[P('Pasta aglutinata','g 130'),P('Tonno al naturale','g 40')],'tonno','1230')],
+      merenda:[F('Pane aglutinato','g 100','pane'),F('Crema di mandorle','4 cucchiaini','mandorlecrema'),F('Banane','n° 1','banane')],
+      cena:[F('Petto di pollo','g 200','pollo'),F('Valeriana','1 porzione','valeriana')],
+      arco:[F('Pane aglutinato','g 150','pane'),F('Olio extra vergine di oliva','7 cucchiaini','olio')]
+    }},
+    {id:'gio', short:'Gio', name:'Giovedì', meals:{
+      colazione:[F('Latte intero di vacca','1 bicchiere','latte'),F('Fiocchi di mais','1 bicchiere','fiocchi'),F('Fette biscottate aglutinate','n° 2','fette'),F('Burro di arachidi a ridotto contenuto di grassi','g 10','arachidi')],
+      meta:[F('Mele','n° 1','mele'),F('Mandorle','g 10','mandorle'),F('Crackers aglutinati','n° 3','crackers')],
+      pranzo:[F('Misto legumi secchi','7 cucchiai e ½','legumi'),D('Insalatona, fiocchi di formaggio delattosato e mais',[P('Fiocchi di formaggio delattosato','g 200'),P('Lattuga','g 100'),P('Mais in scatola','g 100')],'insalatona'),F('Carote','1 porzione','carote')],
+      merenda:[F('Banane','n° 1','banane'),F('Gallette di mais aglutinate','n° 3','gallette')],
+      cena:[F('Uovo di gallina','n° 2','uova'),F('Valeriana','1 porzione','valeriana')],
+      arco:[F('Pane aglutinato','g 250','pane'),F('Olio extra vergine di oliva','5 cucchiaini','olio')]
+    }},
+    {id:'ven', short:'Ven', name:'Venerdì', meals:{
+      colazione:[F('Latte intero di vacca delattosato','1 bicchiere','latte'),F('Fiocchi di mais aglutinati','1 bicchiere e ½','fiocchi'),F('Fette biscottate aglutinate','n° 2','fette'),F('Marmellata','2 cucchiaini','marmellata')],
+      meta:[F('Gallette aglutinate di grano saraceno','g 45'),F('Mirtilli','½ bicchiere','mirtilli'),F('Noci secche','g 15','noci')],
+      pranzo:[D('Riso venere, spinaci e parmigiano',[P('Riso venere','6 cucchiai'),P('Spinaci',QB),P('Parmigiano grattugiato','3 cucchiaini')],'rvspinaci','632'),F('Sgombro al naturale','g 70','sgombro'),F('Pomodori','1 porzione','pomodori')],
+      merenda:[F('Pane aglutinato','g 90','pane'),F('Crema di mandorle','3 cucchiaini','mandorlecrema')],
+      cena:[F('Spigola','g 220','spigola'),F('Fagiolini','1 porzione','fagiolini')],
+      arco:[F('Pane aglutinato','g 200','pane'),F('Olio extra vergine di oliva','3 cucchiaini e ½','olio')]
+    }},
+    {id:'sab', short:'Sab', name:'Sabato', meals:{
+      colazione:[F('Latte intero di vacca','1 bicchiere','latte'),F('Fiocchi di mais','1 bicchiere e ½','fiocchi'),F('Fette biscottate aglutinate','n° 2','fette'),F('Crema di nocciole e cacao','2 cucchiaini','nocciole')],
+      meta:[F('Banane','n° 1','banane'),F('Noci secche','g 15','noci')],
+      pranzo:[D('Couscous di mais con verdure',[P('Couscous di mais','10 cucchiai'),P('Misto di verdure cotte',QB)],'couscous','794'),F('Carote','1 porzione','carote')],
+      merenda:[F('Mirtilli','1 bicchiere','mirtilli'),F('Gallette di mais aglutinate','n° 3','gallette')],
+      cena:[F('Petto di tacchino','g 250','tacchino'),F('Carote','1 porzione','carote')],
+      arco:[F('Pane aglutinato','g 240','pane'),F('Olio extra vergine di oliva','7 cucchiaini','olio')]
+    }},
+    {id:'dom', short:'Dom', name:'Domenica', free:true}
+  ];
+
+  var TIPS = {
+    latte:{name:'Latte intero di vacca (anche delattosato)',text:'1 bicchiere colmo = circa 200 g. Se lo scaldi, non farlo bollire. Una volta aperta la confezione, tienilo in frigorifero e consumalo entro 2 giorni.'},
+    fiocchi:{name:'Fiocchi di mais (anche aglutinati)',text:'1 bicchiere colmo = circa 40 g. Solo fiocchi semplici, senza cacao, cioccolato, glassa, frutta, miele o crusca. Richiudi bene il sacchetto per mantenerli fragranti. Quelli aglutinati si trovano in farmacia o al supermercato.'},
+    fette:{name:'Fette biscottate aglutinate',text:'Una fetta media pesa circa 13 g. Si trovano facilmente in farmacia. Conservale nella confezione originale ben chiusa.'},
+    marmellata:{name:'Marmellata',text:'1 cucchiaino = circa 10 g. Va bene qualsiasi tipo, meglio senza pezzi di frutta interi.'},
+    nocciole:{name:'Crema di nocciole e cacao',text:'1 cucchiaino = circa 5 g. Conservala in un luogo fresco e asciutto.'},
+    mandorlecrema:{name:'Crema di mandorle',text:'1 cucchiaino = circa 5 g. Meglio senza semi, cocco o oli vegetali aggiunti. Mescola bene prima di ogni uso, perché gli oli tendono a separarsi. Dopo l\'apertura tienila in frigorifero.'},
+    arachidi:{name:'Burro di arachidi a ridotto contenuto di grassi',text:'Dopo l\'apertura tienilo in frigorifero e consumalo entro la data indicata.'},
+    gallette:{name:'Gallette di mais aglutinate',text:'Ogni galletta pesa circa 15 g. Per gustarle meglio, passale qualche minuto nel forno o nel tostapane.'},
+    crackers:{name:'Crackers aglutinati',text:'Ogni cracker pesa circa 7 g. Dopo l\'apertura richiudi bene il sacchetto interno per non perdere fragranza.'},
+    mirtilli:{name:'Mirtilli',text:'1 bicchiere colmo = circa 140 g. Vanno bene freschi o surgelati; se sono freschi, consumali in fretta.'},
+    mandorle:{name:'Mandorle',text:'Intere, sgusciate o affettate, ma senza sale, zucchero o cacao. Consumale entro 2 mesi dall\'acquisto oppure congelale.'},
+    noci:{name:'Noci secche',text:'Intere o sgusciate, senza sale o altri ingredienti aggiunti. Consumale entro 2 mesi dall\'acquisto oppure congelale.'},
+    banane:{name:'Banane',text:'Una banana media, al netto della buccia, pesa circa 100 g.'},
+    mele:{name:'Mele',text:'Una mela media, al netto dello scarto, pesa circa 150 g. Mangiala con la buccia, lavata bene con acqua e bicarbonato. Quelle a buccia verde hanno meno zuccheri.'},
+    pesche:{name:'Pesche',text:'Una pesca media, al netto dello scarto, pesa circa 140 g. Se la pesca a buccia vellutata ti dà prurito, scegli la pesca noce; se scegli la vellutata, evita di mangiare la buccia.'},
+    uva:{name:'Uva',text:'1 bicchiere colmo = circa 140 g. Controlla che gli acini siano ben attaccati e lavali con cura prima di mangiarli.'},
+    pasta:{name:'Pasta aglutinata',text:'Segui i tempi di cottura riportati sulla confezione. Si trova in farmacia e nei supermercati con il reparto senza glutine.'},
+    ragu:{name:'Pasta aglutinata con ragù di vitello',text:'Fai insaporire il vitello tritato in padella con un po\' dell\'olio assegnato e aromi a piacere, poi aggiungi i pomodori (freschi o pelati) e lascia cuocere. Cuoci la pasta e, a fine cottura, unisci il ragù.'},
+    tonno:{name:'Pasta aglutinata con il tonno al naturale',text:'Scegli una lattina senza ammaccature o rigonfiamenti ed elimina l\'acqua di conservazione. Fai insaporire il tonno in padella con un po\' dell\'olio assegnato e aromi a piacere. Cuoci la pasta, aggiungi il condimento e mescola.'},
+    riso:{name:'Riso',text:'1 cucchiaio da minestra colmo = circa 20 g (6 cucchiai = circa 120 g). Cuocilo al dente: continua a cuocere anche dopo che lo togli dal fuoco. Il parboiled resta più al dente.'},
+    risofunghi:{name:'Riso, funghi e parmigiano',text:'Affetta sottili i funghi (freschi o surgelati) e passali in padella con un po\' dell\'olio assegnato e aromi a piacere. Scola il riso prima che la cottura sia ultimata, uniscilo ai funghi e porta a termine la cottura. Aggiungi il parmigiano alla fine. 6 cucchiai di riso = circa 120 g. "Quanto basta" di funghi è la quantità minima per rendere il piatto di tuo gradimento.'},
+    rv:{name:'Riso venere',text:'1 cucchiaio colmo = circa 20 g. Cuocilo in acqua pari a 2 volte e mezzo il suo volume, a fuoco moderato per 30-40 minuti (meno con la pentola a pressione).'},
+    rvspinaci:{name:'Riso venere, spinaci e parmigiano',text:'Lessa gli spinaci, oppure tritali e cuocili in padella con un po\' dell\'olio. Cuoci il riso venere (6 cucchiai = circa 120 g), aggiungi gli spinaci e il parmigiano e mescola bene. "Quanto basta" di spinaci è la quantità minima per rendere il piatto di tuo gradimento.'},
+    couscous:{name:'Couscous di mais con verdure',text:'1 cucchiaio colmo di couscous = circa 10 g (10 cucchiai = circa 100 g). Scegli le verdure che preferisci tra quelle del piano, escluse patate e legumi, lavale con acqua e bicarbonato, tagliale a pezzetti e cuocile in padella con acqua, un po\' dell\'olio e aromi. Fai bollire acqua leggermente salata in quantità pari al couscous, versala sul couscous in un piatto fondo e copri con un coperchio, mescolando ogni tanto con una forchetta. Se serve, aggiungi altra acqua bollente. A fine cottura unisci le verdure.'},
+    legumi:{name:'Misto legumi secchi',text:'1 cucchiaio colmo = circa 20 g. Puoi comprare il misto già pronto o unire ceci, fagioli, piselli e lenticchie. Lava i legumi e lasciali in ammollo circa 8 ore; con la pentola a pressione i tempi si accorciano. Condisci con un po\' dell\'olio assegnato e aromi a piacere.'},
+    insalatona:{name:'Insalatona con fiocchi di formaggio delattosato e mais',text:'Lava e taglia la lattuga in un contenitore, aggiungi il mais scolato dell\'acqua di conservazione, poi i fiocchi di formaggio delattosato e un po\' dell\'olio assegnato. Mescola bene.'},
+    fesa:{name:'Fesa di tacchino arrosto',text:'Controlla in etichetta che non ci siano fonti di glutine. Conservala in frigorifero tra 2 e 4 °C e consumala entro 24 ore dall\'acquisto (o dall\'apertura della confezione).'},
+    pollo:{name:'Petto di pollo',text:'Puoi lessarlo, cuocerlo al forno o in padella antiaderente. Condiscilo preferibilmente a cottura ultimata con un po\' dell\'olio assegnato e, se ti piace, succo di limone.'},
+    tacchino:{name:'Petto di tacchino',text:'Cuocilo arrosto, ai ferri o in padella antiaderente. Condiscilo preferibilmente dopo la cottura con un po\' dell\'olio assegnato e, se ti piace, succo di limone.'},
+    sogliola:{name:'Sogliola',text:'Fresca o surgelata. Se la compri intera, pesala già pulita aggiungendo il 15% alla quantità del piano per la lisca. Lessala oppure cuocila in padella o al forno con un po\' dell\'olio e, volendo, limone.'},
+    spigola:{name:'Spigola',text:'Detta anche branzino. Se la compri intera, aggiungi circa il 20% alla quantità del piano per la lisca. Cuocila al forno o al cartoccio con un po\' dell\'olio assegnato.'},
+    sgombro:{name:'Sgombro al naturale',text:'Scegli quello con meno di 4 g di grassi per 100 g e una lattina senza ammaccature o rigonfiamenti. Scola bene l\'acqua di conservazione. Una volta aperta la confezione, tienilo in frigorifero e consumalo entro 24 ore. Puoi mangiarlo al naturale o con un po\' dell\'olio e qualche goccia di limone.'},
+    uova:{name:'Uovo di gallina',text:'Un uovo medio pesa circa 60 g. Puoi mangiarlo in camicia, sodo o alla coque, con un po\' dell\'olio assegnato. Controlla la data di scadenza.'},
+    carote:{name:'Carote',text:'1 porzione = circa 100 g. Meglio crude: cotte perdono parte delle vitamine. Puoi grattugiarle o tagliarle a pezzetti e condirle con un po\' dell\'olio.'},
+    fagiolini:{name:'Fagiolini',text:'1 porzione = circa 150 g. Lavali (meglio con acqua e bicarbonato), togli le due estremità, lessali e condisci con un po\' dell\'olio.'},
+    patate:{name:'Patate',text:'Lesse o al forno, di solito sono più saporite se cotte intere e pelate da calde. Le patate novelle si cuociono intere, dopo aver tolto la buccia sottile sfregandole con un canovaccio ruvido inumidito. Condisci con un po\' dell\'olio.'},
+    pomodori:{name:'Pomodori',text:'1 porzione = circa 200 g. Meglio crudi, lavati con acqua e bicarbonato, con sale e un po\' dell\'olio. Ogni tanto puoi cuocerli al forno o alla piastra con aromi a piacere.'},
+    spinaci:{name:'Spinaci',text:'1 porzione = circa 150 g. Freschi o surgelati. Lavali con cura e lasciali almeno 10 minuti in acqua con limone o bicarbonato, poi lessali e condisci con un po\' dell\'olio.'},
+    valeriana:{name:'Valeriana',text:'1 porzione = circa 100 g. Lavala con acqua e bicarbonato, falla sgocciolare bene e condiscila con un po\' dell\'olio.'},
+    olio:{name:'Olio extra vergine di oliva',text:'1 cucchiaino medio = circa 4 g. È preferibile usarlo a crudo, per non alterarne le proprietà. Conservalo a temperatura ambiente, al riparo dalla luce.'},
+    pane:{name:'Pane aglutinato',text:'Si trova in farmacia in vari formati (a fette, panini, rosette). Conservalo nella confezione originale e scaldalo qualche minuto in forno prima di mangiarlo.'},
+    parmigiano:{name:'Parmigiano grattugiato',text:'1 cucchiaino = circa 5 g. Reggiano o Grana padano: grattugialo al momento dell\'uso.'}
+  };
+
+  var ALTS = {
+    '1239':{title:'Pasta aglutinata con ragù di vitello',sub:'Pranzo del lunedì',list:[
+      ['Pasta aglutinata con ragù di vitello','Pasta aglutinata g 150, salsa di pomodoro quanto basta, vitello magro g 50'],
+      ['Pasta aglutinata, pomodoro e vongole','Pasta aglutinata g 150, salsa di pomodoro quanto basta, vongole g 60'],
+      ['Pasta aglutinata con la bottarga','Pasta aglutinata g 150, bottarga di muggine grattugiata 5 cucchiaini'],
+      ['Pasta aglutinata con il parmigiano','Pasta aglutinata g 150, parmigiano grattugiato 4 cucchiaini'],
+      ['Pasta aglutinata, melanzane e parmigiano','Pasta aglutinata g 150, melanzane quanto basta, parmigiano grattugiato 4 cucchiaini'],
+      ['Pasta aglutinata, piselli e parmigiano','Pasta aglutinata g 140, piselli freschi 2 cucchiai e ½, parmigiano grattugiato 4 cucchiaini'],
+      ['Pasta aglutinata, verdure e parmigiano','Pasta aglutinata g 140, misto di verdure cotte quanto basta, parmigiano grattugiato 4 cucchiaini'],
+      ['Pasta aglutinata, spinaci e parmigiano','Pasta aglutinata g 140, spinaci quanto basta, parmigiano grattugiato 4 cucchiaini'],
+      ['Pasta aglutinata, peperoni e parmigiano','Pasta aglutinata g 140, peperoni quanto basta, parmigiano grattugiato 4 cucchiaini'],
+      ['Pasta aglutinata, pomodoro e parmigiano','Pasta aglutinata g 140, salsa di pomodoro quanto basta, parmigiano grattugiato 4 cucchiaini']
+    ]},
+    '445':{title:'Riso, funghi e parmigiano',sub:'Pranzo del martedì',list:[
+      ['Riso, funghi e parmigiano','Riso 6 cucchiai, funghi quanto basta, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso, spinaci e parmigiano','Riso 6 cucchiai, spinaci quanto basta, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso, verdure e parmigiano','Riso 6 cucchiai, misto di verdure cotte quanto basta, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso, piselli e parmigiano','Riso 6 cucchiai, piselli freschi 2 cucchiai, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso, zucchine e parmigiano','Riso 6 cucchiai, zucchine quanto basta, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso, pomodoro e parmigiano','Riso 6 cucchiai, salsa di pomodoro quanto basta, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso con il parmigiano','Riso 6 cucchiai, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso, pomodoro, piselli e parmigiano','Riso 5 cucchiai e ½, salsa di pomodoro quanto basta, piselli freschi 2 cucchiai, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso con ragù di vitello','Riso 6 cucchiai, salsa di pomodoro quanto basta, vitello magro g 40'],
+      ['Riso con le vongole','Riso 6 cucchiai e ½, vongole g 50']
+    ]},
+    '1230':{title:'Pasta aglutinata con il tonno al naturale',sub:'Pranzo del mercoledì',list:[
+      ['Pasta aglutinata con il tonno al naturale','Pasta aglutinata g 130, tonno al naturale g 40'],
+      ['Pasta aglutinata con le melanzane','Pasta aglutinata g 140, melanzane quanto basta'],
+      ['Pasta aglutinata con le zucchine','Pasta aglutinata g 140, zucchine quanto basta'],
+      ['Pasta aglutinata con le verdure','Pasta aglutinata g 130, misto di verdure cotte quanto basta'],
+      ['Pasta aglutinata con i funghi','Pasta aglutinata g 140, funghi quanto basta'],
+      ['Pasta aglutinata in bianco','Pasta aglutinata g 140'],
+      ['Pasta aglutinata con peperoni','Pasta aglutinata g 130, peperoni quanto basta'],
+      ['Pasta aglutinata con il pomodoro','Pasta aglutinata g 140, salsa di pomodoro quanto basta'],
+      ['Pasta aglutinata, pomodoro e piselli','Pasta aglutinata g 130, salsa di pomodoro quanto basta, piselli freschi 2 cucchiai'],
+      ['Pasta aglutinata con i frutti di mare','Pasta aglutinata g 130, frutti di mare g 50']
+    ]},
+    '632':{title:'Riso venere, spinaci e parmigiano',sub:'Pranzo del venerdì',list:[
+      ['Riso venere, spinaci e parmigiano','Riso venere 6 cucchiai, spinaci quanto basta, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso venere, funghi e parmigiano','Riso venere 6 cucchiai, funghi quanto basta, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso venere, verdure e parmigiano','Riso venere 6 cucchiai, misto di verdure cotte quanto basta, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso venere, piselli e parmigiano','Riso venere 6 cucchiai, piselli freschi 2 cucchiai, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso venere, zucchine e parmigiano','Riso venere 6 cucchiai, zucchine quanto basta, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso venere, pomodoro e parmigiano','Riso venere 6 cucchiai, salsa di pomodoro quanto basta, parmigiano grattugiato 3 cucchiaini'],
+      ['Riso venere con ragù di vitello','Riso venere 6 cucchiai, salsa di pomodoro quanto basta, vitello magro g 40'],
+      ['Riso venere con le vongole','Riso venere 6 cucchiai e ½, vongole g 50'],
+      ['Riso venere, pomodoro e gamberi','Riso venere 6 cucchiai, salsa di pomodoro quanto basta, gamberi g 60'],
+      ['Riso venere con le seppie','Riso venere 6 cucchiai e ½, seppie g 70']
+    ]},
+    '794':{title:'Couscous di mais con verdure',sub:'Pranzo del sabato',list:[
+      ['Couscous di mais con verdure','Couscous di mais 10 cucchiai, misto di verdure cotte quanto basta'],
+      ['Couscous di mais in insalata','Couscous di mais 10 cucchiai, misto di verdure crude quanto basta'],
+      ['Couscous di mais con i frutti di mare','Couscous di mais 9 cucchiai, frutti di mare g 50, misto di verdure cotte quanto basta'],
+      ['Couscous di mais con vitello','Couscous di mais 9 cucchiai, vitello magro g 50, misto di verdure cotte quanto basta'],
+      ['Couscous di mais con agnello','Couscous di mais 8 cucchiai, agnello g 40, misto di verdure cotte quanto basta'],
+      ['Tabbouleh di couscous di mais','Couscous di mais 8 cucchiai, pomodori g 50, cipolle g 50, prezzemolo g 10, menta g 10, succo di limone 2 cucchiaini, olio extra vergine di oliva 2 cucchiaini']
+    ]}
+  };
+
+  var RULES = [
+    {t:'Da rispettare sempre',items:[
+      'Non aumentare né diminuire le quantità di nessun alimento.',
+      'Non saltare i pasti e non invertire i giorni.',
+      'Non sostituire o spostare gli alimenti senza l\'indicazione della nutrizionista.',
+      'Se nei primi tempi senti un po\' di fame o un senso di pienezza, non modificare il piano.',
+      'Dopo un eccesso, il giorno dopo non ridurre le quantità: riparti dal piano.'
+    ]},
+    {t:'Pesi e misure',items:[
+      'Gli alimenti si pesano a crudo, prima della cottura. I surgelati si pesano dopo lo scongelamento.',
+      'Il peso è della sola parte edibile: carne senza ossa, frutta senza buccia e semi, pesce senza lisca.',
+      'Cucchiai, cucchiaini, bicchieri e porzioni sono misure medie: le equivalenze in grammi sono nel tasto "i" di ogni alimento.',
+      'Pesa con precisione e non andare "a occhio". Se cucina qualcun altro, fagli seguire le stesse quantità.'
+    ]},
+    {t:'Cotture',items:[
+      'Carne e pesce: alla griglia, al forno, in padella, in umido, al cartoccio, lessati.',
+      'Verdure: alla griglia, al forno, in padella, lessate, al vapore.',
+      'Sale nella quantità minima sufficiente a soddisfare il gusto. Spezie e aromi in quantità modeste.'
+    ]},
+    {t:'Pane e olio nell\'arco della giornata',items:[
+      'Puoi distribuirli quando vuoi, durante i pasti o fuori pasto.',
+      'Non sono facoltativi: vanno consumati in aggiunta agli alimenti degli altri pasti dello stesso giorno.',
+      'Puoi unire più portate in un unico piatto senza cambiare le quantità, per esempio usare il contorno per condire la pasta o la frutta per arricchire un secondo.'
+    ]},
+    {t:'Acqua',items:[
+      'Almeno 1-1,5 litri al giorno di acqua naturale non gassata, meglio a temperatura ambiente.',
+      'Di più quando fa caldo o fai attività fisica.',
+      'Puoi bere ai pasti, senza esagerare.'
+    ]},
+    {t:'Surgelati ed etichette',items:[
+      'I surgelati sono ammessi, soprattutto pesce e verdure difficili da trovare freschi.',
+      'Leggi le etichette dei prodotti confezionati: non devono contenere, nemmeno in tracce, alimenti che ti provocano reazioni avverse.'
+    ]},
+    {t:'Domenica a dieta libera',items:[
+      'Scegli tu gli alimenti e le quantità di ogni pasto, prendendo come esempio gli altri giorni.',
+      'È un esercizio utile: anticipa quello che farai da solo quando la dieta sarà finita.'
+    ]}
+  ];
+
+  var qs = function(s,r){ return (r||document).querySelector(s); };
+  var qsa = function(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+  var esc = function(s){ return String(s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+
+  var CHEV = '<svg class="chev" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+  var CHECK = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+
+  /* ---------- Stato e salvataggio ---------- */
+  var SK = 'menu-dieta-v1';
+  function weekKey(){
+    var d = new Date(); d.setHours(0,0,0,0);
+    d.setDate(d.getDate() - ((d.getDay()+6)%7));
+    return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+  }
+  function loadDone(){
+    try{
+      var r = JSON.parse(localStorage.getItem(SK) || 'null');
+      if(r && r.week === weekKey() && r.done) return r.done;
+    }catch(e){}
+    return {};
+  }
+  var state = {
+    day: (new Date().getDay()+6)%7,
+    today: (new Date().getDay()+6)%7,
+    done: loadDone()
+  };
+  function save(){
+    try{ localStorage.setItem(SK, JSON.stringify({week:weekKey(), done:state.done})); }catch(e){}
+  }
+
+  /* ---------- Menu ---------- */
+  function foodHTML(f){
+    var t = f.tip && TIPS[f.tip];
+    var info = t ? '<button class="info" data-a="tip" aria-expanded="false" aria-label="Consigli su '+esc(f.n)+'">i</button>' : '';
+    var qty = f.q ? '<span class="qty">'+esc(f.q)+'</span>' : '';
+    var parts = f.parts ? '<ul class="parts">'+f.parts.map(function(p){
+      return '<li><span>'+esc(p.n)+'</span><span class="qty'+(p.q===QB?' qb':'')+'">'+esc(p.q)+'</span></li>';
+    }).join('')+'</ul>' : '';
+    var alt = f.alt ? '<button class="link" data-a="alt" data-alt="'+f.alt+'">Vedi le alternative a questo piatto</button>' : '';
+    var tip = t ? '<div class="tip"><div class="tip-in"><div class="tipbox">'+esc(t.text)+alt+'</div></div></div>' : '';
+    return '<li class="food"><div class="food-main"><span class="fname">'+esc(f.n)+'</span>'+qty+info+'</div>'+parts+tip+'</li>';
+  }
+
+  function mealHTML(m, items, dayId){
+    var key = dayId+':'+m.id;
+    var done = !!state.done[key];
+    var preview = items.map(function(i){ return i.n; }).join(', ');
+    var count = items.length + (items.length===1 ? ' alimento' : ' alimenti');
+    return '<section class="meal glass open'+(done?' done':'')+'" style="--c:'+m.c+'" data-key="'+key+'">'+
+      '<div class="meal-h">'+
+        '<button class="meal-toggle" data-a="meal" aria-expanded="true">'+
+          '<span class="chip" aria-hidden="true">'+m.icon+'</span>'+
+          '<span class="mtxt"><span class="mname">'+esc(m.name)+'</span><span class="msub"><span class="cn">'+count+'</span><span class="pv">'+esc(preview)+'</span></span></span>'+
+          CHEV+
+        '</button>'+
+        '<button class="done-btn" data-a="done" aria-pressed="'+done+'" aria-label="Segna come fatto: '+esc(m.name)+'">'+CHECK+'</button>'+
+      '</div>'+
+      '<div class="meal-body"><div class="meal-in"><ul class="foods">'+items.map(foodHTML).join('')+'</ul></div></div>'+
+    '</section>';
+  }
+
+  function renderDays(){
+    qs('#days').innerHTML = DAYS.map(function(d,i){
+      return '<button class="day-btn'+(i===state.today?' today':'')+'" role="tab" data-a="day" data-i="'+i+'" aria-selected="'+(i===state.day)+'" aria-label="'+d.name+(i===state.today?' (oggi)':'')+'">'+d.short+'</button>';
+    }).join('');
+  }
+
+  function renderDay(){
+    var d = DAYS[state.day];
+    var head = '<div class="dayhead"><div class="row"><h2>'+d.name+'</h2>'+(state.day===state.today?'<span class="today-pill">Oggi</span>':'')+'</div>';
+    var html;
+    if(d.free){
+      html = head+'</div>'+
+        '<section class="free glass"><div class="chip" aria-hidden="true">🌿</div>'+
+        '<h3>Giorno a dieta libera</h3>'+
+        '<p>Oggi scegli tu gli alimenti e le quantità di ogni pasto, prendendo come esempio gli altri giorni della settimana.</p>'+
+        '<p>È un esercizio utile: anticipa quello che farai da solo quando la dieta sarà finita.</p>'+
+        '<div class="lbl">Prendi spunto da un giorno</div>'+
+        '<div class="chips">'+DAYS.filter(function(x){return !x.free;}).map(function(x){
+          return '<button class="pill" data-a="day" data-i="'+DAYS.indexOf(x)+'">'+x.name+'</button>';
+        }).join('')+'</div></section>';
+    } else {
+      html = head+
+        '<div class="progress"><div class="ptxt"><span><b id="pc">0</b> di '+MEALS.length+' completati</span></div><div class="bar"><i id="pf"></i></div></div>'+
+        '<p class="hint">Tocca il cerchio a destra di un pasto per segnarlo come fatto.</p>'+
+        '<div class="actions"><button class="pill" id="allbtn" data-a="all">Comprimi tutto</button></div></div>'+
+        '<div class="meals">'+MEALS.map(function(m){ return mealHTML(m, d.meals[m.id], d.id); }).join('')+'</div>'+
+        '<div class="footer-actions" id="resetwrap"><button class="textbtn" data-a="reset">Azzera le spunte della settimana</button></div>';
+    }
+    qs('#day').innerHTML = html;
+    updateProgress();
+  }
+
+  function updateProgress(){
+    var d = DAYS[state.day]; if(d.free) return;
+    var n = MEALS.filter(function(m){ return state.done[d.id+':'+m.id]; }).length;
+    var pc = qs('#pc'), pf = qs('#pf');
+    if(pc) pc.textContent = n;
+    if(pf) pf.style.width = Math.round(n/MEALS.length*100)+'%';
+    var rw = qs('#resetwrap');
+    if(rw) rw.hidden = Object.keys(state.done).filter(function(k){return state.done[k];}).length === 0;
+  }
+
+  /* ---------- Consigli ---------- */
+  function acc(id, title, sub, body, name){
+    return '<div class="acc glass" id="'+id+'"'+(name?' data-name="'+esc(name.toLowerCase())+'"':'')+'>'+
+      '<button class="acc-h" data-a="acc" aria-expanded="false"><span class="at"><b>'+esc(title)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</span>'+CHEV+'</button>'+
+      '<div class="acc-b"><div class="acc-in"><div class="acc-pad">'+body+'</div></div></div></div>';
+  }
+
+  function renderConsigli(){
+    qs('#rules').innerHTML = RULES.map(function(r,i){
+      return acc('rule-'+i, r.t, '', '<ul class="rules">'+r.items.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')+'</ul>');
+    }).join('');
+
+    qs('#alts').innerHTML = ['1239','445','1230','632','794'].map(function(k){
+      var a = ALTS[k];
+      var body = '<ul class="alts">'+a.list.map(function(x,i){
+        return '<li><span class="an">'+esc(x[0])+(i===0?'<span class="tag">Nel tuo menu</span>':'')+'</span><span class="ai">'+esc(x[1])+'</span></li>';
+      }).join('')+'</ul>';
+      return acc('alt-'+k, 'Alternative: '+a.title, a.sub, body);
+    }).join('');
+
+    var keys = Object.keys(TIPS).sort(function(a,b){ return TIPS[a].name.localeCompare(TIPS[b].name,'it'); });
+    qs('#guida').innerHTML = keys.map(function(k){
+      return acc('g-'+k, TIPS[k].name, '', '<p>'+esc(TIPS[k].text)+'</p>', TIPS[k].name);
+    }).join('');
+  }
+
+  /* ---------- Navigazione ---------- */
+  function setTab(t){
+    qs('#menu').hidden = t !== 'menu';
+    qs('#consigli').hidden = t !== 'consigli';
+    qsa('.nav button').forEach(function(b){ b.setAttribute('aria-selected', String(b.dataset.tab === t)); });
+    window.scrollTo({top:0});
+  }
+
+  function toggleAcc(a, force){
+    var open = force !== undefined ? force : !a.classList.contains('open');
+    a.classList.toggle('open', open);
+    var h = qs('.acc-h', a); if(h) h.setAttribute('aria-expanded', String(open));
+  }
+
+  document.addEventListener('click', function(e){
+    var el = e.target.closest('[data-a]'); if(!el) return;
+    var a = el.dataset.a;
+
+    if(a === 'tab'){ setTab(el.dataset.tab); }
+
+    else if(a === 'day'){
+      state.day = +el.dataset.i; renderDays(); renderDay();
+      if(el.closest('.free')) window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    else if(a === 'meal'){
+      var m = el.closest('.meal');
+      var open = !m.classList.contains('open');
+      m.classList.toggle('open', open);
+      el.setAttribute('aria-expanded', String(open));
+    }
+
+    else if(a === 'done'){
+      var mm = el.closest('.meal'), k = mm.dataset.key;
+      state.done[k] = !state.done[k];
+      mm.classList.toggle('done', !!state.done[k]);
+      el.setAttribute('aria-pressed', String(!!state.done[k]));
+      save(); updateProgress();
+    }
+
+    else if(a === 'tip'){
+      var tip = el.closest('.food').querySelector('.tip');
+      var o = !tip.classList.contains('open');
+      tip.classList.toggle('open', o);
+      el.setAttribute('aria-expanded', String(o));
+    }
+
+    else if(a === 'all'){
+      var meals = qsa('.meal');
+      var anyOpen = meals.some(function(x){ return x.classList.contains('open'); });
+      meals.forEach(function(x){
+        x.classList.toggle('open', !anyOpen);
+        qs('.meal-toggle', x).setAttribute('aria-expanded', String(!anyOpen));
+      });
+      el.textContent = anyOpen ? 'Espandi tutto' : 'Comprimi tutto';
+    }
+
+    else if(a === 'acc'){ toggleAcc(el.closest('.acc')); }
+
+    else if(a === 'alt'){
+      setTab('consigli');
+      var target = document.getElementById('alt-'+el.dataset.alt);
+      toggleAcc(target, true);
+      setTimeout(function(){ target.scrollIntoView({behavior:'smooth', block:'center'}); }, 80);
+    }
+
+    else if(a === 'reset'){
+      state.done = {}; save();
+      qsa('.meal').forEach(function(x){
+        x.classList.remove('done');
+        qs('.done-btn', x).setAttribute('aria-pressed','false');
+      });
+      updateProgress();
+    }
+  });
+
+  qs('#q').addEventListener('input', function(e){
+    var v = e.target.value.trim().toLowerCase(), n = 0;
+    qsa('#guida .acc').forEach(function(x){
+      var ok = !v || x.dataset.name.indexOf(v) !== -1;
+      x.hidden = !ok; if(ok) n++;
+    });
+    qs('#nores').hidden = n > 0;
+  });
+
+  renderDays(); renderDay(); renderConsigli();
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

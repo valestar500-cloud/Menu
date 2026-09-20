@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#48D6A0"/>
+      <stop offset="1" stop-color="#17694E"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.22" cy="0.12" r="0.75">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bowl" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".98"/>
+      <stop offset="1" stop-color="#DDF5EA" stop-opacity=".92"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect width="512" height="512" fill="url(#glow)"/>
+  <g transform="translate(256 268) scale(1.28) translate(-256 -262)">
+    <circle cx="208" cy="222" r="40" fill="#FF6B5B"/>
+    <ellipse cx="272" cy="200" rx="48" ry="28" transform="rotate(-22 272 200)" fill="#9BE8B8"/>
+    <circle cx="326" cy="224" r="32" fill="#FFC857"/>
+    <ellipse cx="238" cy="196" rx="30" ry="16" transform="rotate(28 238 196)" fill="#54C98F"/>
+    <path d="M128 250 H384 A128 128 0 0 1 128 250 Z" fill="url(#bowl)"/>
+    <rect x="120" y="242" width="272" height="16" rx="8" fill="#ffffff"/>
+    <path d="M164 290 Q200 330 256 340" fill="none" stroke="#ffffff" stroke-opacity=".8" stroke-width="7" stroke-linecap="round"/>
+  </g>
+</svg>
